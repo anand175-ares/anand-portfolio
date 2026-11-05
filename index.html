@@ -1,0 +1,531 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101510">
+  <meta name="description" content="Anand M is a software engineer and Unity developer building multiplayer games, interactive experiences, and useful web features.">
+  <title>Anand M — Software Engineer & Unity Developer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      color-scheme: dark;
+      --ink: #101510;
+      --ink-soft: #1b211a;
+      --paper: #f0f1e9;
+      --muted: #a4ad9e;
+      --lime: #d7ff53;
+      --coral: #ff7554;
+      --line: rgba(240, 241, 233, .15);
+      --mono: "DM Mono", monospace;
+      --display: "Space Grotesk", sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; scroll-padding-top: 88px; }
+    body { margin: 0; background: var(--ink); color: var(--paper); font-family: var(--display); -webkit-font-smoothing: antialiased; }
+    main, footer { position: relative; z-index: 1; }
+    #ambient-canvas { position: fixed; inset: 0; z-index: 0; width: 100%; height: 100%; pointer-events: none; opacity: .68; }
+    a { color: inherit; text-decoration: none; }
+    button { font: inherit; }
+    .wrap { width: min(1120px, calc(100% - 48px)); margin-inline: auto; }
+    .eyebrow { color: var(--lime); font: 500 11px/1.5 var(--mono); letter-spacing: .12em; text-transform: uppercase; }
+
+    .topbar { position: sticky; top: 0; z-index: 20; background: rgba(16, 21, 16, .92); backdrop-filter: blur(14px); border-bottom: 1px solid var(--line); }
+    .nav { min-height: 72px; display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+    .wordmark { font-size: 15px; font-weight: 700; letter-spacing: .01em; }
+    .wordmark span { color: var(--lime); }
+    .nav-links { display: flex; align-items: center; gap: 30px; color: #c4c9bd; font-size: 13px; }
+    .nav-links a:hover, .text-link:hover { color: var(--lime); }
+    .nav-cta { padding: 11px 16px; border: 1px solid var(--lime); color: var(--lime); font-size: 12px; font-weight: 600; }
+    .nav-cta:hover { color: var(--ink); background: var(--lime); }
+
+    .hero { position: relative; overflow: hidden; min-height: 625px; display: grid; align-items: center; border-bottom: 1px solid var(--line); }
+    .hero::before { content: ""; position: absolute; inset: 0 0 0 46%; opacity: .31; background-image: linear-gradient(rgba(215,255,83,.1) 1px, transparent 1px), linear-gradient(90deg, rgba(215,255,83,.1) 1px, transparent 1px); background-size: 54px 54px; mask-image: linear-gradient(90deg, transparent, #000 45%, #000); pointer-events: none; }
+    .hero-inner { position: relative; display: grid; grid-template-columns: 1.15fr .85fr; align-items: center; gap: 42px; padding-block: 82px; }
+    .hero-copy { max-width: 650px; }
+    .availability { display: inline-flex; align-items: center; gap: 9px; margin-bottom: 27px; color: #c4c9bd; font: 11px var(--mono); }
+    .availability::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--lime); box-shadow: 0 0 12px rgba(215,255,83,.65); }
+    h1 { margin: 0; font-size: clamp(56px, 8.3vw, 106px); line-height: .91; letter-spacing: -.075em; font-weight: 600; }
+    h1 span { display: block; color: var(--lime); }
+    .hero-copy p { max-width: 480px; margin: 27px 0 0; color: #b6bdb0; font-size: 16px; line-height: 1.7; }
+    .hero-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 22px; margin-top: 30px; }
+    .button { min-height: 48px; display: inline-flex; align-items: center; justify-content: center; padding: 0 18px; background: var(--lime); color: var(--ink); font-size: 13px; font-weight: 700; transition: transform .18s ease, background .18s ease; }
+    .button:hover { transform: translateY(-2px); background: #e4ff88; }
+    .text-link { font-size: 13px; color: #dce0d7; }
+    .text-link::after { content: "  ↗"; color: var(--coral); }
+
+    .scene { position: relative; width: min(100%, 390px); aspect-ratio: 1 / 1; justify-self: end; display: grid; place-items: center; }
+    .scene-frame { position: absolute; inset: 7%; border: 1px solid rgba(215,255,83,.32); transform: rotate(4deg); }
+    .scene-frame::before, .scene-frame::after { content: ""; position: absolute; background: var(--coral); }
+    .scene-frame::before { width: 26px; height: 3px; top: -2px; left: 18%; }
+    .scene-frame::after { width: 3px; height: 26px; right: -2px; bottom: 17%; }
+    .profile-card { position: relative; width: 78%; aspect-ratio: 1 / 1; overflow: hidden; border: 1px solid rgba(215,255,83,.52); background: #dfe2dc; box-shadow: 0 16px 42px rgba(0,0,0,.32); }
+    .profile-card::after { content: ""; position: absolute; inset: 30% 0 0; background: linear-gradient(180deg, transparent 48%, rgba(16,21,16,.22)); pointer-events: none; }
+    .profile-photo { width: 100%; height: 100%; display: block; object-fit: cover; object-position: center 28%; filter: saturate(.88) contrast(1.03); }
+    .scene-tag { position: absolute; z-index: 2; padding: 9px 11px; background: var(--paper); color: var(--ink); font: 10px var(--mono); box-shadow: 4px 4px 0 var(--coral); }
+    .scene-tag.one { top: 15%; right: 0; transform: rotate(4deg); }
+    .scene-tag.two { bottom: 13%; left: -1%; transform: rotate(-5deg); background: var(--lime); box-shadow: 4px 4px 0 var(--paper); }
+    .scene-index { position: absolute; right: 8%; bottom: 4%; color: #858f80; font: 10px var(--mono); }
+    .ticker { overflow: hidden; border-bottom: 1px solid var(--line); background: rgba(215,255,83,.97); color: var(--ink); }
+    .ticker-track { min-height: 48px; display: flex; align-items: center; justify-content: space-around; gap: 28px; white-space: nowrap; font: 500 10px var(--mono); text-transform: uppercase; }
+    .ticker-track span::after { content: " /"; padding-left: 26px; color: #65752d; }
+
+    section.content-section { padding-block: 100px; border-bottom: 1px solid var(--line); }
+    .section-heading { display: flex; align-items: end; justify-content: space-between; gap: 28px; margin-bottom: 42px; }
+    h2 { margin: 9px 0 0; font-size: clamp(42px, 5.6vw, 68px); line-height: .98; letter-spacing: -.06em; font-weight: 600; }
+    .section-note { max-width: 300px; margin: 0; color: var(--muted); font-size: 14px; line-height: 1.7; }
+
+    .about-grid { display: grid; grid-template-columns: .8fr 1.2fr; gap: 80px; align-items: start; }
+    .about-stamp { min-height: 230px; display: flex; flex-direction: column; justify-content: space-between; padding: 24px; background: var(--lime); color: var(--ink); }
+    .about-stamp strong { max-width: 250px; font-size: 31px; line-height: 1.04; letter-spacing: -.05em; }
+    .about-stamp span { font: 10px var(--mono); text-transform: uppercase; }
+    .about-copy p { margin: 0 0 18px; color: #bcc3b7; font-size: 16px; line-height: 1.8; }
+    .about-copy p strong { color: var(--paper); font-weight: 600; }
+    .skill-lines { display: grid; grid-template-columns: 1fr 1fr; gap: 0 36px; margin-top: 32px; border-top: 1px solid var(--line); }
+    .skill-line { padding: 16px 0 13px; border-bottom: 1px solid var(--line); }
+    .skill-line span { display: block; margin-bottom: 8px; color: var(--lime); font: 10px var(--mono); text-transform: uppercase; }
+    .skill-line p { margin: 0; color: #d5d9d0; font-size: 14px; line-height: 1.65; }
+
+    .project-list { border-top: 1px solid var(--line); }
+    .project { display: grid; grid-template-columns: 52px 1fr 210px; gap: 20px; align-items: center; min-height: 115px; padding: 20px 0; border-bottom: 1px solid var(--line); transition: padding .2s ease; }
+    .project:hover { padding-inline: 10px; }
+    .project-no { color: var(--coral); font: 11px var(--mono); }
+    .project h3 { margin: 0 0 5px; font-size: 23px; font-weight: 500; letter-spacing: -.03em; }
+    .project p { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.6; }
+    .project-type { justify-self: end; color: var(--lime); font: 11px/1.7 var(--mono); text-align: right; text-transform: uppercase; }
+    .project-type span { display: block; color: #7e887b; }
+
+    .experience { display: grid; grid-template-columns: .8fr 1.2fr; gap: 80px; }
+    .experience-meta { color: var(--muted); font: 11px/1.8 var(--mono); }
+    .experience-meta strong { display: block; margin: 14px 0 4px; color: var(--paper); font: 600 24px var(--display); }
+    .experience-detail h3 { margin: 0 0 14px; font-size: 23px; font-weight: 500; }
+    .experience-detail p, .experience-detail li { color: #b8c0b3; font-size: 14px; line-height: 1.75; }
+    .experience-detail ul { margin: 0; padding-left: 18px; }
+    .experience-detail li { padding: 4px 0; }
+    .education { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 56px; padding-top: 22px; border-top: 1px solid var(--line); }
+    .education-item span { color: var(--lime); font: 10px var(--mono); text-transform: uppercase; }
+    .education-item p { margin: 9px 0 0; color: #d5d9d0; font-size: 14px; line-height: 1.6; }
+
+    .extra-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 70px; }
+    .extra-grid h3 { margin: 0 0 18px; font-size: 18px; font-weight: 500; }
+    .plain-list { display: grid; gap: 11px; margin: 0; padding: 0; list-style: none; color: #b8c0b3; font-size: 14px; }
+    .plain-list li { display: flex; gap: 12px; line-height: 1.55; }
+    .plain-list li::before { content: "+"; color: var(--coral); font: 14px var(--mono); }
+
+    .contact { position: relative; overflow: hidden; padding-block: 88px; background: rgba(255,117,84,.95); color: var(--ink); }
+    .contact::after { content: ""; position: absolute; top: -80px; right: 4%; width: 280px; height: 280px; border: 1px solid rgba(16,21,16,.22); transform: rotate(22deg); pointer-events: none; }
+    .contact .eyebrow { color: #283126; }
+    .contact h2 { max-width: 700px; font-size: clamp(48px, 8vw, 92px); }
+    .contact-game { display: grid; grid-template-columns: .8fr 1.2fr; gap: 28px; margin-top: 38px; padding: 24px; background: var(--ink); color: var(--paper); }
+    .game-instructions { display: flex; flex-direction: column; align-items: flex-start; }
+    .game-kicker { color: var(--lime); font: 10px var(--mono); letter-spacing: .1em; text-transform: uppercase; }
+    .game-instructions h3 { margin: 12px 0 8px; font-size: clamp(24px, 3vw, 34px); font-weight: 500; letter-spacing: -.04em; }
+    .game-instructions > p { margin: 0; color: #b8c0b3; font-size: 13px; line-height: 1.6; }
+    .game-stats { display: flex; gap: 30px; margin: 21px 0; }
+    .game-stats div { display: grid; gap: 4px; }
+    .game-stats span { color: #9da798; font: 10px var(--mono); text-transform: uppercase; }
+    .game-stats strong { font: 500 20px var(--mono); }
+    .game-start { min-height: 42px; padding: 0 14px; border: 0; background: var(--lime); color: var(--ink); font-size: 12px; font-weight: 700; cursor: pointer; }
+    .game-start:hover { background: #e4ff88; }
+    .game-start:focus-visible, .signal-target:focus-visible { outline: 3px solid var(--paper); outline-offset: 3px; }
+    .game-instructions .game-message { min-height: 20px; margin-top: 12px; color: #d3dacd; font-size: 11px; }
+    .signal-board { position: relative; display: grid; min-height: 235px; overflow: hidden; place-items: center; border: 1px solid rgba(240,241,233,.2); background-color: #171d17; background-image: linear-gradient(rgba(215,255,83,.08) 1px, transparent 1px), linear-gradient(90deg, rgba(215,255,83,.08) 1px, transparent 1px); background-size: 28px 28px; }
+    .signal-target { position: absolute; width: 42px; height: 42px; display: grid; place-items: center; padding: 0; border: 0; border-radius: 50%; background: var(--lime); color: var(--ink); font-size: 19px; line-height: 1; cursor: pointer; transform: translate(-50%, -50%); transition: left .14s ease, top .14s ease, transform .14s ease; }
+    .signal-target:hover { transform: translate(-50%, -50%) scale(1.12); }
+    .signal-target[hidden] { display: none; }
+    .board-hint { color: #788273; font: 10px var(--mono); letter-spacing: .08em; text-align: center; text-transform: uppercase; }
+    .integrity-result { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; gap: clamp(12px, 3vw, 26px); padding: 18px; overflow: hidden; background: radial-gradient(ellipse at center, rgba(215,255,83,.13), transparent 68%); animation: integrity-reveal .55s both; }
+    .integrity-result[hidden] { display: none; }
+    .integrity-result::before { content: ""; position: absolute; z-index: 1; top: -30%; left: 0; width: 100%; height: 10px; background: linear-gradient(90deg, transparent, var(--lime), transparent); box-shadow: 0 0 22px 4px rgba(215,255,83,.35); animation: integrity-scan 1.8s ease-in-out infinite; }
+    .integrity-shield { position: relative; z-index: 2; width: 62px; height: 70px; flex: 0 0 auto; display: grid; place-items: center; color: var(--lime); font: 24px var(--mono); clip-path: polygon(50% 0, 94% 16%, 88% 70%, 50% 100%, 12% 70%, 6% 16%); background: rgba(215,255,83,.13); animation: shield-secure .6s .2s both; }
+    .integrity-shield::before { content: ""; position: absolute; inset: 3px; z-index: -1; clip-path: inherit; background: var(--ink); }
+    .integrity-copy { position: relative; z-index: 2; display: grid; gap: 7px; }
+    .integrity-label, .integrity-hash { color: #a9b29f; font: 9px var(--mono); letter-spacing: .08em; }
+    .integrity-copy strong { color: var(--lime); font: 600 clamp(14px, 2.5vw, 20px) var(--display); letter-spacing: .04em; }
+    .integrity-hash { color: #e0e8d6; }
+    .integrity-stamp { position: absolute; right: 14px; bottom: 12px; color: rgba(215,255,83,.55); font: 9px var(--mono); letter-spacing: .14em; }
+    .signal-board.is-secured { border-color: rgba(215,255,83,.72); box-shadow: inset 0 0 36px rgba(215,255,83,.08), 0 0 22px rgba(215,255,83,.13); }
+    .contact-game.is-secured { animation: secured-pulse .65s ease-out; }
+    @keyframes integrity-reveal { from { opacity: 0; transform: scale(.96); } to { opacity: 1; transform: scale(1); } }
+    @keyframes integrity-scan { 0% { top: -10px; } 100% { top: calc(100% + 10px); } }
+    @keyframes shield-secure { from { opacity: 0; transform: scale(.5) rotate(-18deg); } to { opacity: 1; transform: scale(1) rotate(0); } }
+    @keyframes secured-pulse { 50% { box-shadow: 0 0 34px rgba(215,255,83,.25); } }
+    .contact-row { display: flex; align-items: center; justify-content: space-between; gap: 24px; margin-top: 34px; }
+    .contact-row p { margin: 0; font-size: 14px; }
+    .contact-links { display: flex; flex-wrap: wrap; gap: 10px; }
+    .contact-button { min-height: 46px; display: inline-flex; align-items: center; padding: 0 16px; border: 1px solid var(--ink); font-size: 12px; font-weight: 700; }
+    .contact-button:hover { background: var(--ink); color: var(--paper); }
+    .contact-game.is-secured + .contact-row .contact-button { background: var(--ink); color: var(--lime); animation: winner-glow 2s ease-in-out infinite; }
+    .contact-game.is-secured + .contact-row .contact-button:nth-child(2) { animation-delay: .15s; }
+    .contact-game.is-secured + .contact-row .contact-button:nth-child(3) { animation-delay: .3s; }
+    .contact-game.is-secured + .contact-row .contact-button:nth-child(4) { animation-delay: .45s; }
+    @keyframes winner-glow {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(215,255,83,.12); }
+      50% { box-shadow: 0 0 16px 3px rgba(215,255,83,.48); }
+    }
+    footer { padding-block: 20px; color: #8f998b; font: 10px var(--mono); }
+    .footer-row { display: flex; justify-content: space-between; gap: 16px; }
+
+    @media (max-width: 760px) {
+      .wrap { width: min(100% - 36px, 560px); }
+      .nav { min-height: 64px; }
+      .nav-links { gap: 15px; font-size: 11px; }
+      .nav-links a:nth-child(2), .nav-links a:nth-child(3) { display: none; }
+      .nav-cta { padding: 9px 11px; font-size: 11px; }
+      .hero { min-height: auto; }
+      .hero-inner { grid-template-columns: 1fr; gap: 10px; padding-block: 72px 40px; }
+      h1 { font-size: clamp(60px, 15vw, 94px); }
+      .hero-copy p { max-width: 430px; font-size: 15px; }
+      .scene { width: min(73vw, 310px); justify-self: center; margin: 10px auto 0; }
+      .ticker-track { justify-content: flex-start; min-height: 42px; animation: ticker-scroll 22s linear infinite; }
+      .ticker-track span { flex-shrink: 0; }
+      @keyframes ticker-scroll { to { transform: translateX(-30%); } }
+      section.content-section { padding-block: 72px; }
+      .section-heading { display: block; margin-bottom: 32px; }
+      .section-note { margin-top: 16px; }
+      .about-grid, .experience { grid-template-columns: 1fr; gap: 28px; }
+      .about-stamp { min-height: 170px; }
+      .skill-lines { gap: 0 18px; }
+      .project { grid-template-columns: 30px 1fr; gap: 12px; min-height: 105px; }
+      .project-type { grid-column: 2; justify-self: start; text-align: left; }
+      .project-type span { display: inline; margin-left: 7px; }
+      .education { margin-top: 36px; }
+      .extra-grid { grid-template-columns: 1fr; gap: 38px; }
+      .contact { padding-block: 68px; }
+      .contact-game { grid-template-columns: 1fr; gap: 18px; padding: 20px; }
+      .signal-board { min-height: 200px; }
+      .contact-row { display: block; }
+      .contact-links { margin-top: 23px; }
+    }
+    @media (max-width: 420px) {
+      .wrap { width: calc(100% - 30px); }
+      .nav-links { gap: 10px; }
+      .nav-links a:first-child { display: none; }
+      .availability { font-size: 10px; }
+      .hero-inner { padding-top: 58px; }
+      .hero-actions { gap: 15px; }
+      .skill-lines, .education { grid-template-columns: 1fr; }
+      .footer-row { flex-direction: column; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="ambient-canvas" aria-hidden="true"></canvas>
+  <header class="topbar">
+    <nav class="nav wrap" aria-label="Main navigation">
+      <a class="wordmark" href="#home" aria-label="Anand M, home">ANAND<span>.</span>M</a>
+      <div class="nav-links">
+        <a href="#about">About</a>
+        <a href="#work">Work</a>
+        <a href="#experience">Experience</a>
+        <a class="nav-cta" href="#contact">Let's talk ↗</a>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero" id="home">
+      <div class="hero-inner wrap">
+        <div class="hero-copy">
+          <div class="availability">SOFTWARE ENGINEER · UNITY DEVELOPER</div>
+          <h1>ANAND<span>BUILDS.</span></h1>
+          <p>Featured: my File Integrity Monitor, a Python tool that checks files against SHA-256 baselines. I also build multiplayer games and practical web integrations.</p>
+          <div class="hero-actions">
+            <a class="button" href="#work">Explore my work</a>
+            <a class="text-link" href="mailto:anandmariappan175@gmail.com">Get in touch</a>
+          </div>
+        </div>
+        <div class="scene" role="img" aria-label="Portrait of Anand M, software engineer and Unity developer">
+          <div class="scene-frame"></div>
+          <div class="profile-card" aria-hidden="true">
+            <img class="profile-photo" src="assets/anand-profile.png" alt="">
+          </div>
+          <span class="scene-tag one">ANAND M.</span>
+          <span class="scene-tag two">SOFTWARE ENGINEER · UNITY</span>
+          <span class="scene-index">KOVILPATTI · INDIA</span>
+        </div>
+      </div>
+    </section>
+
+    <div class="ticker" aria-label="Specialties">
+      <div class="ticker-track wrap"><span>Unity 3D & 2D</span><span>Photon PUN</span><span>Firebase</span><span>Web integrations</span><span>AR / VR</span></div>
+    </div>
+
+    <section class="content-section" id="about">
+      <div class="wrap about-grid">
+        <div>
+          <div class="eyebrow">01 / A little about me</div>
+          <div class="about-stamp" style="margin-top:22px">
+            <span>ENGINEER · MAKER · PROBLEM SOLVER</span>
+            <strong>Curious by default. Shipping by design.</strong>
+            <span>KOVILPATTI, TAMIL NADU</span>
+          </div>
+        </div>
+        <div class="about-copy">
+          <p>I’m a <strong>software engineer and Unity developer</strong> at Hudsmer Business Solutions, working across game development and web integrations.</p>
+          <p>From multiplayer gameplay to Firebase-powered notifications, I enjoy bringing systems together and turning a promising idea into a feature people can use. My foundation is in computer science, with a growing interest in cybersecurity.</p>
+          <div class="skill-lines">
+            <div class="skill-line"><span>Game development</span><p>Unity 3D & 2D, C#, Photon PUN, Unity Gaming Services, AR/VR</p></div>
+            <div class="skill-line"><span>Web & backend</span><p>JavaScript, HTML, CSS, Firebase, REST-style integrations</p></div>
+            <div class="skill-line"><span>Languages</span><p>Python, C, C#, Java, SQL</p></div>
+            <div class="skill-line"><span>Tools</span><p>Git, Linux, Oracle APEX, Jira</p></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section" id="work">
+      <div class="wrap">
+        <div class="section-heading">
+          <div><div class="eyebrow">02 / Selected projects</div><h2>Things I’ve<br>helped bring to life.</h2></div>
+          <p class="section-note">A mix of multiplayer worlds, practical tools, and small experiments in making software useful.</p>
+        </div>
+        <div class="project-list">
+          <article class="project"><span class="project-no">01</span><div><h3>Web Push Notifications</h3><p>Firebase Cloud Messaging integration for timely notifications on web platforms.</p></div><div class="project-type">Web integration<span>Firebase · JavaScript</span></div></article>
+          <article class="project"><span class="project-no">02</span><div><h3>Advertisement Board</h3><p>Dynamic advertisement content management and display for company websites.</p></div><div class="project-type">Web development<span>Front end · Integrations</span></div></article>
+          <article class="project"><span class="project-no">03</span><div><h3>Form Automation Tool</h3><p>Automates repetitive form-filling and data-entry workflows using Python.</p></div><div class="project-type">Automation<span>Python</span></div></article>
+          <article class="project"><span class="project-no">04</span><div><h3>Web Scraping Tool</h3><p>Collects data from public websites that permit scraping, respecting robots.txt and site policies.</p></div><div class="project-type">Web automation<span>Python</span></div></article>
+          <article class="project"><span class="project-no">05</span><div><h3>File Integrity Monitor</h3><p>Tracks file changes against a SHA-256 baseline and reports additions, edits, and deletions.</p></div><div class="project-type">Cybersecurity<span>Python · SHA-256 · JSON</span></div></article>
+          <article class="project"><span class="project-no">06</span><div><h3>Airline Management System</h3><p>Relational database and management system designed for airline operations.</p></div><div class="project-type">Database system<span>SQL · DBMS</span></div></article>
+          <article class="project"><span class="project-no">07</span><div><h3>Gym Management System</h3><p>Membership and scheduling management application.</p></div><div class="project-type">Software application<span>Java</span></div></article>
+          <article class="project"><span class="project-no">08</span><div><h3>E-Learning Recommendation System</h3><p>Machine learning recommendation engine for personalized learning content.</p></div><div class="project-type">Machine learning<span>Personalization</span></div></article>
+          <article class="project"><span class="project-no">09</span><div><h3>CarRacing Multiplayer</h3><p>Real-time racing built around networked gameplay and connected services.</p></div><div class="project-type">Multiplayer game<span>Unity · Photon PUN · UGS</span></div></article>
+          <article class="project"><span class="project-no">10</span><div><h3>FPS Multiplayer</h3><p>First-person shooter prototype with networked multiplayer functionality.</p></div><div class="project-type">Multiplayer game<span>Unity 3D · Photon</span></div></article>
+          <article class="project"><span class="project-no">11</span><div><h3>Rubrixo</h3><p>3D puzzle and arcade game designed and built in Unity.</p></div><div class="project-type">Puzzle game<span>Unity 3D</span></div></article>
+          <article class="project"><span class="project-no">12</span><div><h3>Parking Jam Escape</h3><p>3D puzzle game focused on spatial logic and level design.</p></div><div class="project-type">Puzzle game<span>Unity 3D</span></div></article>
+          <article class="project"><span class="project-no">13</span><div><h3>UnPuzzle</h3><p>2D puzzle game with custom level mechanics.</p></div><div class="project-type">Puzzle game<span>Unity 2D</span></div></article>
+          <article class="project"><span class="project-no">14</span><div><h3>2048 Legend</h3><p>Browser-based puzzle game built with HTML, CSS, and JavaScript.</p></div><div class="project-type">Browser game<span>HTML · CSS · JavaScript</span></div></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section" id="experience">
+      <div class="wrap">
+        <div class="section-heading"><div><div class="eyebrow">03 / The path so far</div><h2>Experience &<br>education.</h2></div></div>
+        <div class="experience">
+          <div class="experience-meta"><div class="eyebrow">JUNE 2025 — PRESENT</div><strong>Hudsmer Business Solutions</strong>Coimbatore, Tamil Nadu</div>
+          <div class="experience-detail"><h3>Software Engineer</h3><ul><li>Built web push notification features with Firebase Cloud Messaging and developed dynamic advertisement modules for company websites.</li><li>Contribute to Unity game and interactive application development, including gameplay, UI, and multiplayer features in C# and Photon PUN.</li><li>Work across Unity and web projects, delivering features with C#, JavaScript, and Firebase.</li></ul></div>
+        </div>
+        <div class="experience" style="margin-top:42px">
+          <div class="experience-meta"><div class="eyebrow">16-WEEK INTERNSHIP</div><strong>Oracle APEX</strong>Application development</div>
+          <div class="experience-detail"><h3>Intern</h3><p>Hands-on experience with low-code application development, database-driven forms, and reporting using Oracle APEX.</p></div>
+        </div>
+        <div class="education">
+          <div class="education-item"><span>2021 — 2025</span><p><strong>B.E. Computer Science & Engineering</strong><br>National Engineering College, Kovilpatti</p></div>
+          <div class="education-item"><span>2019 — 2021</span><p><strong>HSC 78.4% · SSLC 64%</strong><br>Edustar International School, Kovilpatti</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section">
+      <div class="wrap extra-grid">
+        <div><div class="eyebrow">04 / Learning & recognition</div><h2 style="font-size:38px;margin-bottom:26px">Always in progress.</h2><ul class="plain-list"><li>Cybersecurity Basics — edX (IBM)</li><li>Cloud Computing, IIOT 4.0, Fundamentals of AI — NPTEL</li><li>HTML, CSS & JavaScript — Infosys Springboard</li><li>C for Everyone — Coursera · C Programming — SoloLearn</li></ul></div>
+        <div><div class="eyebrow">05 / Beyond the code</div><h2 style="font-size:38px;margin-bottom:26px">A few more notes.</h2><ul class="plain-list"><li>Solved 1,400+ programming problems on Skillrack</li><li>7th place out of 70 teams, Coding22 at Sudarsan Engineering College</li><li>Participant, IEEE ADSF Conference</li><li>NCC · Rotaract</li><li>Tamil · English · Telugu</li></ul></div>
+      </div>
+    </section>
+
+    <section class="contact" id="contact">
+      <div class="wrap">
+        <div class="eyebrow">Have a good one in mind?</div>
+        <h2>Let’s make<br>something work.</h2>
+        <div class="contact-game" aria-labelledby="game-title">
+          <div class="game-instructions">
+            <span class="game-kicker">Mini game / 01</span>
+            <h3 id="game-title">Catch the signal.</h3>
+            <p>Catch 5 signals before the 15-second timer runs out.</p>
+            <div class="game-stats" aria-label="Game stats">
+              <div><span>Signals</span><strong id="game-score">0 / 5</strong></div>
+              <div><span>Time</span><strong><span id="game-time">15</span>s</strong></div>
+            </div>
+            <button class="game-start" id="game-start" type="button">Start game</button>
+            <p class="game-message" id="game-message" role="status" aria-live="polite">Ready when you are.</p>
+          </div>
+          <div class="signal-board" id="signal-board" aria-label="Catch the moving signal">
+            <span class="board-hint" id="board-hint">Your signal will appear here</span>
+            <button class="signal-target" id="signal-target" type="button" aria-label="Catch the signal" hidden>+</button>
+            <div class="integrity-result" id="integrity-result" aria-hidden="true" hidden>
+              <span class="integrity-shield">✓</span>
+              <span class="integrity-copy">
+                <span class="integrity-label">SECURITY CHECK / GAME DEMO</span>
+                <strong>VERIFIED</strong>
+                <span class="integrity-hash">SHA-256 / SIMULATED MATCH</span>
+              </span>
+              <span class="integrity-stamp">DEMO STATUS: PASS</span>
+            </div>
+          </div>
+        </div>
+        <div class="contact-row"><p>Open to conversations about software, games, and collaboration.</p><div class="contact-links"><a class="contact-button" href="mailto:anandmariappan175@gmail.com">Gmail ↗</a><a class="contact-button" href="https://www.linkedin.com/in/anand175" target="_blank" rel="noopener noreferrer">LinkedIn ↗</a><a class="contact-button" href="tel:+917598357874">Call ↗</a><a class="contact-button" href="resume.pdf" target="_blank" rel="noopener noreferrer">View résumé ↗</a></div></div>
+      </div>
+    </section>
+  </main>
+
+  <footer><div class="wrap footer-row"><span>© <span id="year">2026</span> Anand M · Built with intention.</span><a href="#home">Back to top ↑</a></div></footer>
+  <script>
+    const ambientCanvas = document.getElementById("ambient-canvas");
+    const ambientContext = ambientCanvas.getContext("2d");
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const particles = [];
+    let ambientWidth = 0;
+    let ambientHeight = 0;
+    let ambientScroll = window.scrollY;
+    let ambientFrame;
+
+    function resizeAmbientCanvas() {
+      const pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
+      ambientWidth = window.innerWidth;
+      ambientHeight = window.innerHeight;
+      ambientCanvas.width = Math.round(ambientWidth * pixelRatio);
+      ambientCanvas.height = Math.round(ambientHeight * pixelRatio);
+      ambientContext.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+      particles.length = 0;
+      let seed = 41;
+      function random() {
+        seed = (seed * 16807) % 2147483647;
+        return (seed - 1) / 2147483646;
+      }
+      const count = Math.min(42, Math.max(20, Math.round(ambientWidth / 30)));
+      for (let i = 0; i < count; i += 1) {
+        particles.push({
+          x: random(),
+          y: random(),
+          radius: 1 + random() * 1.2,
+          speed: .006 + random() * .012,
+          phase: random() * Math.PI * 2,
+          accent: i % 9 === 0
+        });
+      }
+      drawAmbientNetwork(0);
+    }
+
+    function drawAmbientNetwork(time) {
+      ambientContext.clearRect(0, 0, ambientWidth, ambientHeight);
+      const scrollShift = ambientScroll * .14;
+      const points = particles.map((particle) => ({
+        x: particle.x * ambientWidth + Math.sin(time * .00025 + particle.phase) * 12,
+        y: (particle.y * ambientHeight + time * particle.speed + scrollShift) % ambientHeight,
+        particle
+      }));
+
+      for (let i = 0; i < points.length; i += 1) {
+        for (let j = i + 1; j < points.length; j += 1) {
+          const dx = points[i].x - points[j].x;
+          const dy = points[i].y - points[j].y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+          if (distance < 118) {
+            ambientContext.beginPath();
+            ambientContext.moveTo(points[i].x, points[i].y);
+            ambientContext.lineTo(points[j].x, points[j].y);
+            ambientContext.strokeStyle = `rgba(215,255,83,${(1 - distance / 118) * .16})`;
+            ambientContext.lineWidth = 1;
+            ambientContext.stroke();
+          }
+        }
+      }
+
+      for (const point of points) {
+        ambientContext.beginPath();
+        ambientContext.arc(point.x, point.y, point.particle.radius, 0, Math.PI * 2);
+        ambientContext.fillStyle = point.particle.accent
+          ? "rgba(255,117,84,.42)"
+          : "rgba(215,255,83,.4)";
+        ambientContext.fill();
+      }
+    }
+
+    function animateAmbientNetwork(time) {
+      if (document.visibilityState !== "visible" || reducedMotion.matches) {
+        ambientFrame = undefined;
+        return;
+      }
+      drawAmbientNetwork(time);
+      ambientFrame = window.requestAnimationFrame(animateAmbientNetwork);
+    }
+
+    function startAmbientNetwork() {
+      if (ambientFrame === undefined && document.visibilityState === "visible" && !reducedMotion.matches) {
+        ambientFrame = window.requestAnimationFrame(animateAmbientNetwork);
+      }
+    }
+
+    window.addEventListener("resize", resizeAmbientCanvas);
+    window.addEventListener("scroll", () => { ambientScroll = window.scrollY; }, { passive: true });
+    document.addEventListener("visibilitychange", startAmbientNetwork);
+    reducedMotion.addEventListener("change", startAmbientNetwork);
+    resizeAmbientCanvas();
+    startAmbientNetwork();
+
+    document.getElementById("year").textContent = new Date().getFullYear();
+
+    const gameStart = document.getElementById("game-start");
+    const gameBoard = document.getElementById("signal-board");
+    const gameTarget = document.getElementById("signal-target");
+    const gameScore = document.getElementById("game-score");
+    const gameTime = document.getElementById("game-time");
+    const gameMessage = document.getElementById("game-message");
+    const boardHint = document.getElementById("board-hint");
+    const integrityResult = document.getElementById("integrity-result");
+    const contactGame = document.querySelector(".contact-game");
+    let score = 0;
+    let timeLeft = 15;
+    let gameTimer;
+
+    function moveSignal() {
+      const x = 12 + Math.random() * 76;
+      const y = 16 + Math.random() * 68;
+      gameTarget.style.left = `${x}%`;
+      gameTarget.style.top = `${y}%`;
+    }
+
+    function finishGame(won) {
+      clearInterval(gameTimer);
+      gameTarget.hidden = true;
+      integrityResult.hidden = !won;
+      gameBoard.classList.toggle("is-secured", won);
+      contactGame.classList.toggle("is-secured", won);
+      gameStart.disabled = false;
+      gameStart.textContent = "Play again";
+      gameMessage.textContent = won ? "Signal secured. Nice catch!" : "Time’s up. Give it another try!";
+      boardHint.hidden = false;
+      boardHint.textContent = won ? "Signal secured" : "Ready for another round?";
+    }
+
+    gameStart.addEventListener("click", () => {
+      clearInterval(gameTimer);
+      integrityResult.hidden = true;
+      gameBoard.classList.remove("is-secured");
+      contactGame.classList.remove("is-secured");
+      score = 0;
+      timeLeft = 15;
+      gameScore.textContent = `${score} / 5`;
+      gameTime.textContent = timeLeft;
+      gameMessage.textContent = "Go! Catch the signal.";
+      boardHint.hidden = true;
+      gameStart.disabled = true;
+      gameTarget.hidden = false;
+      moveSignal();
+      gameTimer = setInterval(() => {
+        timeLeft -= 1;
+        gameTime.textContent = timeLeft;
+        if (timeLeft <= 0) finishGame(false);
+      }, 1000);
+    });
+
+    gameTarget.addEventListener("click", () => {
+      score += 1;
+      gameScore.textContent = `${score} / 5`;
+      if (score >= 5) {
+        finishGame(true);
+        return;
+      }
+      gameMessage.textContent = `${5 - score} more to go!`;
+      moveSignal();
+    });
+  </script>
+</body>
+</html>
